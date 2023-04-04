@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Getter
 @ToString(includeFieldNames=true)
-@AllArgsConstructor
+@Builder
 public class User {
     @Setter
     private  Integer id;

@@ -1,64 +1,47 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.*;
 
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 
 @RestController
-@Slf4j
-@RequestMapping("/films")
+@RequestMapping("/films" )
+@Validated
 public class FilmController {
 
-    private final Map<Integer,Film> films = new HashMap<>();
-    private Integer counterId = 1;
+    private final FilmService service;
 
-    @PostMapping
-    @SneakyThrows
-    public Film createFilm(@Valid @RequestBody Film film) {
-        validation(film);
-        film.setId(counterId++);
-        if(films.containsValue(film)){
-            log.warn("Фильм уже был создан, была вызвана ошибка",FilmController.class);
-            throw new HasAlreadyBeenCreatedException();
-        }
-        films.put(film.getId(),film);
-        return film;
+    @Autowired
+    public FilmController(FilmService service) {
+        this.service = service;
     }
 
-    @PutMapping
+    @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film createFilm(@Valid @RequestBody Film film) {
+        return service.createFilm(film);
+    }
+
+    @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
     public Film updateFilm(@Valid @RequestBody Film film) {
-        validation(film);
-        if(films.containsKey(film.getId())) {
-            films.put(film.getId(),film);
-            return film;
-        } else {
-            log.warn("Обновление несуществующего фильма не произошло",UserController.class);
-            throw new HasNoBeenCreatedException();
-        }
+        return service.updateFilm(film);
     }
 
     @GetMapping
-    public Map<Integer,Film> getFilms() {
-        return films;
+    public List<Film> getFilms() {
+        return service.getFilms();
     }
-    @SneakyThrows
-    public void validation(@Valid Film film){ // Валидация
-            if(film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
-                log.warn("День релиза фильма раньше 1895 года",FilmController.class);
-                throw new RelaseDateEarlyThanNecessaryException();
-            }
-    }
+
 }
