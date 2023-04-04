@@ -15,10 +15,9 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-
+@Validated
 @RestController
 @RequestMapping("/films")
-@Validated
 public class FilmController {
 
     private final FilmService service;

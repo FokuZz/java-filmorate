@@ -1,25 +1,15 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-
-import javax.swing.text.html.parser.Entity;
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
