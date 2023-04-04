@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.exception.BirthdayInFutureException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,7 +18,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,9 +40,9 @@ class UserControllerTest {
 
 
     @BeforeEach
-    void userBuilder(){
+    void userBuilder() {
         userBuilder = User.builder()
-                .birthday(LocalDate.of(2001,1,1))
+                .birthday(LocalDate.of(2001, 1, 1))
                 .email("userTest@yandex.ru")
                 .login("UserTest1");
     }
@@ -107,7 +104,7 @@ class UserControllerTest {
 
     @Test
     void createFutureBirthDayUser() throws Exception {
-        user = userBuilder.id(1).birthday(LocalDate.of(2025,1,1)).build();
+        user = userBuilder.id(1).birthday(LocalDate.of(2025, 1, 1)).build();
         json = mapper.writeValueAsString(user);
 
         when(service.createUser(user)).thenThrow(new BirthdayInFutureException());
