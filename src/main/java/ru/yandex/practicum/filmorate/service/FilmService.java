@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Slf4j
 @Service
 @Validated
@@ -26,22 +27,21 @@ public class FilmService {
     private Integer counterId = 1;
 
 
-
     public Film createFilm(@Valid Film film) {
         validation(film);
         film.setId(counterId++);
-        if(films.containsValue(film)){
+        if (films.containsValue(film)) {
             log.warn("Фильм уже был создан, была вызвана ошибка", FilmController.class);
             throw new HasAlreadyBeenCreatedException();
         }
-        films.put(film.getId(),film);
+        films.put(film.getId(), film);
         return film;
     }
 
     public Film updateFilm(@Valid Film film) {
         validation(film);
-        if(films.containsKey(film.getId())) {
-            films.put(film.getId(),film);
+        if (films.containsKey(film.getId())) {
+            films.put(film.getId(), film);
             return film;
         } else {
             log.warn("Обновление несуществующего фильма не произошло", UserController.class);
@@ -54,9 +54,9 @@ public class FilmService {
     }
 
 
-    private void validation(Film film){ // Валидация
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
-            log.warn("День релиза фильма раньше 1895 года",FilmController.class);
+    private void validation(Film film) { // Валидация
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.warn("День релиза фильма раньше 1895 года", FilmController.class);
             throw new RelaseDateEarlyThanNecessaryException();
         }
     }

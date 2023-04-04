@@ -17,7 +17,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
 @RestController
-@RequestMapping("/films" )
+@RequestMapping("/films")
 @Validated
 public class FilmController {
 

@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 @Getter
-@ToString(includeFieldNames=true)
+@ToString(includeFieldNames = true)
 @EqualsAndHashCode
 @Builder
 public class Film {
@@ -21,7 +21,7 @@ public class Film {
     private String name;
     @Size(max = 200, message = "Max 200 letters")
     private String description;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
     @PositiveOrZero(message = "Only positive duration")

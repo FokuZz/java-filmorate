@@ -24,28 +24,28 @@ import java.util.Map;
 @Slf4j
 public class UserService {
 
-    private final Map<Integer,User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
     private Integer counterId = 1;
 
     @SneakyThrows
     public User createUser(User user) {
         user = validation(user);
         user.setId(counterId++);
-        if(users.containsValue(user)) {
+        if (users.containsValue(user)) {
             log.warn("Пользователь уже был создан, была вызвана ошибка", UserController.class);
             throw new HasAlreadyBeenCreatedException();
         }
-        users.put(user.getId(),user);
+        users.put(user.getId(), user);
         return user;
     }
 
     public User updateUser(User user) {
         user = validation(user);
-        if(users.containsKey(user.getId())) {
-            users.put(user.getId(),user);
+        if (users.containsKey(user.getId())) {
+            users.put(user.getId(), user);
             return user;
         } else {
-            log.warn("Обновление несуществующего пользователя не произошло",UserController.class);
+            log.warn("Обновление несуществующего пользователя не произошло", UserController.class);
             throw new HasNoBeenCreatedException();
         }
     }
@@ -56,23 +56,27 @@ public class UserService {
     }
 
     @SneakyThrows
-    public User validation(@Valid User user){
-        if(users.containsValue(user)){
-            if(user.getId() == null){
-                for(Map.Entry<Integer,User> u : users.entrySet()) {
+    public User validation(@Valid User user) {
+        if (users.containsValue(user)) {
+            if (user.getId() == null) {
+                for (Map.Entry<Integer, User> u : users.entrySet()) {
                     if (u.getValue().equals(user)) {
                         throw new HasAlreadyBeenCreatedException();
                     }
                 }
-            } else if(users.get(user.getId()).equals(user)){
+            } else if (users.get(user.getId()).equals(user)) {
                 throw new HasAlreadyBeenCreatedException();
             }
 
         }
-        if(user.getName() == null) {user.setName(user.getLogin());}
-        if(user.getName().isEmpty()) {user.setName(user.getLogin());}
-        if(user.getBirthday().isAfter(LocalDate.now())) {
-            log.warn("Дата рождения в будущем",UserController.class);
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.warn("Дата рождения в будущем", UserController.class);
             throw new BirthdayInFutureException();
         }
         return user;
