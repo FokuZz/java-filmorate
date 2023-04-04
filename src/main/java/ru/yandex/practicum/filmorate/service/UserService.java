@@ -56,8 +56,7 @@ public class UserService {
     }
 
     @SneakyThrows
-    public User validation(@Valid User user){ // Валидация
-        user.setLogin(user.getLogin().trim());          // (вместо валидации) Теперь он не содержит лишних пробелов
+    public User validation(@Valid User user){
         if(users.containsValue(user)){
             if(user.getId() == null){
                 for(Map.Entry<Integer,User> u : users.entrySet()) {

@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.lang.Nullable;
 
 
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Getter
@@ -21,6 +22,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Login cannot be empty")
+    @Pattern(regexp = "\\S+", message = "Login cannot have whitespace")
     @Setter
     private String login;
     @Setter
