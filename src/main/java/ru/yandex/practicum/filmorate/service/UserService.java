@@ -4,13 +4,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.BirthdayInFutureException;
 import ru.yandex.practicum.filmorate.exception.HasAlreadyBeenCreatedException;
 import ru.yandex.practicum.filmorate.exception.HasNoBeenCreatedException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
