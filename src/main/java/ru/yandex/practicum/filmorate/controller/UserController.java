@@ -1,9 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -17,29 +16,25 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @RestController
 @RequestMapping("/users")
-@Validated
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService service;
 
-    public UserController(UserService service) {
-        this.service = service;
-    }
-
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@Valid @RequestBody User user) {
-        return service.createUser(user);
+    public User create(@Valid @RequestBody User user) {
+        return service.create(user);
     }
 
     @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
-    public User updateUser(@Valid @RequestBody User user) {
-        return service.updateUser(user);
+    public User update(@Valid @RequestBody User user) {
+        return service.update(user);
     }
 
     @GetMapping
-    public List<User> getUsers() {
-        return service.getUsers();
+    public List<User> get() {
+        return service.get();
     }
 
 

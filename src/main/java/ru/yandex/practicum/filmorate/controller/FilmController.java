@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,32 +14,27 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
 
     private final FilmService service;
 
-    @Autowired
-    public FilmController(FilmService service) {
-        this.service = service;
-    }
-
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Film createFilm(@Valid @RequestBody Film film) {
-        return service.createFilm(film);
+    public Film create(@Valid @RequestBody Film film) {
+        return service.create(film);
     }
 
     @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_VALUE)
-    public Film updateFilm(@Valid @RequestBody Film film) {
-        return service.updateFilm(film);
+    public Film update(@Valid @RequestBody Film film) {
+        return service.update(film);
     }
 
     @GetMapping
-    public List<Film> getFilms() {
-        return service.getFilms();
+    public List<Film> get() {
+        return service.get();
     }
 
 }

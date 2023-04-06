@@ -4,6 +4,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.BirthdayInFutureException;
 import ru.yandex.practicum.filmorate.exception.HasAlreadyBeenCreatedException;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.HasNoBeenCreatedException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +21,14 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@Validated
 public class UserService {
 
     private final Map<Integer, User> users = new HashMap<>();
     private Integer counterId = 1;
 
     @SneakyThrows
-    public User createUser(User user) {
+    public User create(User user) {
         user = validation(user);
         user.setId(counterId++);
         if (users.containsValue(user)) {
@@ -36,7 +39,7 @@ public class UserService {
         return user;
     }
 
-    public User updateUser(User user) {
+    public User update(User user) {
         user = validation(user);
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -48,12 +51,12 @@ public class UserService {
     }
 
 
-    public List<User> getUsers() {
+    public List<User> get() {
         return new ArrayList<>(users.values());
     }
 
     @SneakyThrows
-    public User validation(@Valid User user) {
+    public User validation(@Valid @NotNull User user) {
         if (users.containsValue(user)) {
             if (user.getId() == null) {
                 for (Map.Entry<Integer, User> u : users.entrySet()) {
@@ -69,7 +72,7 @@ public class UserService {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
-        if (user.getName().isEmpty()) {
+        if (user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {

@@ -53,7 +53,7 @@ class FilmControllerTest {
         film = filmBuilder.id(1).build();
         json = mapper.writeValueAsString(film);
 
-        when(service.createFilm(film)).thenReturn(film);
+        when(service.create(film)).thenReturn(film);
         mockMvc.perform(post(url).content(json).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -95,7 +95,7 @@ class FilmControllerTest {
         film = filmBuilder.id(1).releaseDate(past).build();
         json = mapper.writeValueAsString(film);
 
-        when(service.createFilm(film)).thenThrow(new RelaseDateEarlyThanNecessaryException());
+        when(service.create(film)).thenThrow(new RelaseDateEarlyThanNecessaryException());
         mockMvc.perform(post(url).content(json).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -120,12 +120,12 @@ class FilmControllerTest {
     void updateStandardFilm() throws Exception {
         film = filmBuilder.name("Filmname1").id(1).build();
 
-        when(service.getFilms()).thenReturn(List.of(film));
+        when(service.get()).thenReturn(List.of(film));
 
         film = filmBuilder.id(1).name("JunitUpdateName").build();
         json = mapper.writeValueAsString(film);
 
-        when(service.updateFilm(film)).thenReturn(film);
+        when(service.update(film)).thenReturn(film);
         mockMvc.perform(put(url).contentType(MediaType.APPLICATION_JSON).content(json))
                 .andDo(print())
                 .andExpect(content().string(json))
@@ -136,9 +136,9 @@ class FilmControllerTest {
     void updateEmptyFilm() throws Exception {
         film = filmBuilder.name("Filmname1").id(1).build();
 
-        when(service.getFilms()).thenReturn(List.of(film));
+        when(service.get()).thenReturn(List.of(film));
 
-        when(service.updateFilm(film)).thenReturn(film);
+        when(service.update(film)).thenReturn(film);
         mockMvc.perform(put(url).contentType(MediaType.APPLICATION_JSON).content(""))
                 .andDo(print())
                 .andExpect(content().string(""))
@@ -147,10 +147,10 @@ class FilmControllerTest {
 
 
     @Test
-    void standardGetFilms() throws Exception {
+    void standardget() throws Exception {
         film = filmBuilder.name("Film name1").id(1).build();
 
-        when(service.getFilms()).thenReturn(List.of(film));
+        when(service.get()).thenReturn(List.of(film));
         this.mockMvc
                 .perform(get(url))
                 .andDo(print())
@@ -161,7 +161,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void emptyGetFilms() throws Exception {
+    void emptyget() throws Exception {
         this.mockMvc
                 .perform(get(url))
                 .andDo(print())

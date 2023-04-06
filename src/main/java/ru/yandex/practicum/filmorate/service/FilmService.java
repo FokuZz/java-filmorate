@@ -25,7 +25,7 @@ public class FilmService {
     private Integer counterId = 1;
 
 
-    public Film createFilm(@Valid Film film) {
+    public Film create(@Valid Film film) {
         validation(film);
         film.setId(counterId++);
         if (films.containsValue(film)) {
@@ -36,7 +36,7 @@ public class FilmService {
         return film;
     }
 
-    public Film updateFilm(@Valid Film film) {
+    public Film update(@Valid Film film) {
         validation(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
@@ -47,7 +47,7 @@ public class FilmService {
         }
     }
 
-    public List<Film> getFilms() {
+    public List<Film> get() {
         return new ArrayList<>(films.values());
     }
 

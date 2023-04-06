@@ -53,7 +53,7 @@ class UserControllerTest {
         json = mapper.writeValueAsString(user);
 
 
-        when(service.createUser(user)).thenReturn(user);
+        when(service.create(user)).thenReturn(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -69,7 +69,7 @@ class UserControllerTest {
         User expectedUser = userBuilder.id(1).name("UserTest1").build();
         String expectedJson = mapper.writeValueAsString(expectedUser);
 
-        when(service.createUser(user)).thenReturn(expectedUser);
+        when(service.create(user)).thenReturn(expectedUser);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -94,7 +94,7 @@ class UserControllerTest {
         user = userBuilder.id(1).email(null).build();
         json = mapper.writeValueAsString(user);
 
-        when(service.createUser(user)).thenReturn(user);
+        when(service.create(user)).thenReturn(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -107,7 +107,7 @@ class UserControllerTest {
         user = userBuilder.id(1).birthday(LocalDate.of(2025, 1, 1)).build();
         json = mapper.writeValueAsString(user);
 
-        when(service.createUser(user)).thenThrow(new BirthdayInFutureException());
+        when(service.create(user)).thenThrow(new BirthdayInFutureException());
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -122,12 +122,12 @@ class UserControllerTest {
     void updateStandartUser() throws Exception {
         user = userBuilder.name("FirstName").id(1).build();
 
-        when(service.getUsers()).thenReturn(List.of(user));
+        when(service.get()).thenReturn(List.of(user));
 
         user = userBuilder.id(1).name("TestName").build();
         json = mapper.writeValueAsString(user);
 
-        when(service.updateUser(user)).thenReturn(user);
+        when(service.update(user)).thenReturn(user);
         mockMvc.perform(put(url).contentType(APPLICATION_JSON_UTF8).content(json))
                 .andDo(print())
                 .andExpect(content().string(json))
@@ -138,7 +138,7 @@ class UserControllerTest {
     void updateEmptyUser() throws Exception {
         user = userBuilder.name("FirstName").id(1).build();
 
-        when(service.getUsers()).thenReturn(List.of(user));
+        when(service.get()).thenReturn(List.of(user));
 
         mockMvc.perform(put(url).contentType(APPLICATION_JSON_UTF8).content(""))
                 .andDo(print())
@@ -150,7 +150,7 @@ class UserControllerTest {
     void getStandartFilms() throws Exception {
         user = userBuilder.name("UserName1").id(1).build();
 
-        when(service.getUsers()).thenReturn(List.of(user));
+        when(service.get()).thenReturn(List.of(user));
         this.mockMvc
                 .perform(get(url))
                 .andDo(print())
