@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.exception.RelaseDateEarlyThanNecessaryException;
+
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -95,7 +95,7 @@ class FilmControllerTest {
         film = filmBuilder.id(1).releaseDate(past).build();
         json = mapper.writeValueAsString(film);
 
-        when(service.create(film)).thenThrow(new RelaseDateEarlyThanNecessaryException());
+        when(service.create(film)).thenReturn(film);
         mockMvc.perform(post(url).content(json).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())

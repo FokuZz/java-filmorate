@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import ru.yandex.practicum.filmorate.annotation.ReleaseDate;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -16,12 +17,17 @@ public class Film {
     @Setter
     private Integer id;
     @NotBlank(message = "Name cannot be empty")
+    @NotNull(message = "Name cannot be empty")
     private String name;
     @Size(max = 200, message = "Max 200 letters")
+    @NotNull
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @ReleaseDate(message = "Release date — no earlier than December 28, 1895")
+    @NotNull
     private LocalDate releaseDate;
 
-    @PositiveOrZero(message = "Only positive duration")
+    @Positive(message = "Only positive duration")
+    @NotNull
     private Integer duration;
+
 }
