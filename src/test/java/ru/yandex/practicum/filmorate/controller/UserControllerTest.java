@@ -106,7 +106,7 @@ class UserControllerTest {
         user = userBuilder.id(1).birthday(LocalDate.of(2025, 1, 1)).build();
         json = mapper.writeValueAsString(user);
 
-        when(service.create(user)).thenThrow(new BirthdayInFutureException());
+        when(service.create(user)).thenReturn(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
