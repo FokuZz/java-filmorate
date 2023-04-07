@@ -27,7 +27,9 @@ public class UserService {
 
     @SneakyThrows
     public User create(User user) {
-        user = validation(user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         user.setId(counterId++);
         if (users.containsValue(user)) {
             if (user.getId() == null) {
@@ -47,7 +49,9 @@ public class UserService {
     }
 
     public User update(User user) {
-        user = validation(user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             return user;
@@ -62,11 +66,4 @@ public class UserService {
         return new ArrayList<>(users.values());
     }
 
-    @SneakyThrows
-    public User validation(@Valid @NotNull User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        return user;
-    }
 }

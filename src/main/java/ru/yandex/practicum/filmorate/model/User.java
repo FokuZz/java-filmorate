@@ -23,7 +23,6 @@ public class User {
     private String email;
 
     @NotBlank(message = "Login cannot be empty")
-    @NotNull(message = "Login cannot be empty")
     @Pattern(regexp = "\\S+", message = "Login cannot have whitespace")
     @Setter
     private String login;
