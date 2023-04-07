@@ -17,13 +17,11 @@ public class Film {
     @Setter
     private Integer id;
     @NotBlank(message = "Name cannot be empty")
-    @NotNull(message = "Name cannot be empty")
     private String name;
     @Size(max = 200, message = "Max 200 letters")
     @NotNull
     private String description;
     @ReleaseDate(message = "Release date — no earlier than December 28, 1895")
-    @NotNull
     private LocalDate releaseDate;
 
     @Positive(message = "Only positive duration")

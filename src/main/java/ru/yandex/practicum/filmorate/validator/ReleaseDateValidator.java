@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 
 public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, LocalDate> {
 
+    LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
+
     private DateTimeFormatter formatter;
 
     @Override
@@ -22,7 +24,6 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, Lo
         if (value == null) {
             return false;
         }
-        LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
         return value.isAfter(minReleaseDate);
     }
 }

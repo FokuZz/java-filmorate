@@ -19,7 +19,6 @@ public class User {
     @Setter
     private Integer id;
     @NotBlank(message = "Email cannot be empty")
-    @NotNull(message = "Email cannot be empty")
     @Email(message = "This is not Email format")
     private String email;
 
@@ -41,7 +40,7 @@ public class User {
         if (!(o instanceof User)) return false;
         User u = (User) o;
         return this.login.equals(u.getLogin())
-                && this.email.equals(u.getEmail());
+                || this.email.equals(u.getEmail());
     }
 
     @Override
