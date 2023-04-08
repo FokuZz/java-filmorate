@@ -10,8 +10,6 @@ import ru.yandex.practicum.filmorate.exception.HasAlreadyBeenCreatedException;
 import ru.yandex.practicum.filmorate.exception.HasNoBeenCreatedException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
