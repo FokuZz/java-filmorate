@@ -17,6 +17,7 @@ public interface FilmStorage {
     Film update(Film film);
 
     List<Film> getAll();
+
     Film get(Integer filmId);
 
     Set<User> createLike(Integer filmId, Integer userId);

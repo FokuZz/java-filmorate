@@ -43,13 +43,13 @@ public class InMemoryUserStorage implements UserStorage {
                 throw new HasAlreadyBeenCreatedException();
             }
         }
-        if (deleteCounter != 0) {     // Присваиваем прошлый id который мы удалили
+        if (deleteCounter != 0) {     // Присфывваиваем прошлый id который мы удалили
             user.setId(deleteCounter);
             deleteCounter = 0;
         } else {
             user.setId(counterId++);
         }
-        friends.put(user.getId(),new HashSet<>());
+        friends.put(user.getId(), new HashSet<>());
         users.put(user.getId(), user);
         return user;
     }
@@ -93,7 +93,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User get(Integer userId) {
-        if (!users.containsKey(userId)){
+        if (!users.containsKey(userId)) {
             log.warn("Поиск не произошёл из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
