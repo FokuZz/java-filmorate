@@ -106,6 +106,9 @@ public class InMemoryUserStorage implements UserStorage {
             log.warn("Добавление в друзья не произошло из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
+        setUsers = new HashSet<>(friends.get(friendId));
+        setUsers.add(users.get(userId));
+        friends.put(friendId, setUsers);
         setUsers = new HashSet<>(friends.get(userId));
         setUsers.add(users.get(friendId));
         friends.put(userId, setUsers);

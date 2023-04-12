@@ -160,7 +160,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.size()", is(0)));
     }
 
-    //TODO дописать тесты и быть крутым
     @Test
     void createFriendStandart() throws Exception {
         user = userBuilder.name("UserName1").id(1).build();
