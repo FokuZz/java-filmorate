@@ -20,6 +20,7 @@ public class User {
     private Integer id;
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "This is not Email format")
+    @Setter
     private String email;
 
     @NotBlank(message = "Login cannot be empty")
@@ -29,7 +30,7 @@ public class User {
     @Setter
     private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @PastOrPresent
+    @PastOrPresent(message = "The date of birth cannot be in the future")
     @NotNull(message = "Birthday cannot be empty")
     private LocalDate birthday;
 
@@ -44,6 +45,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return login.hashCode() + birthday.hashCode() + email.hashCode();
+        return login.hashCode() + email.hashCode();
     }
 }

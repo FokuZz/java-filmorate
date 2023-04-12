@@ -18,7 +18,7 @@ import static java.lang.annotation.ElementType.*;
 @Documented
 public @interface ReleaseDate {
 
-    String message() default "Invalid release date format or value";
+    String message() default "Release date no earlier than December 28, 1895";
 
     Class<?>[] groups() default {};
 

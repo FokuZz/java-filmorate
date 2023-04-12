@@ -12,10 +12,12 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, Lo
 
     LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
+    private String message;
     private DateTimeFormatter formatter;
 
     @Override
     public void initialize(ReleaseDate annotation) {
+        message = annotation.message();
         formatter = DateTimeFormatter.ofPattern(annotation.format());
     }
 
@@ -24,6 +26,11 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, Lo
         if (value == null) {
             return false;
         }
-        return value.isAfter(minReleaseDate);
+        if (value.isBefore(minReleaseDate)) {
+            context.buildConstraintViolationWithTemplate(message)
+                    .addConstraintViolation();
+            return false;
+        }
+        return true;
     }
 }
