@@ -42,15 +42,13 @@ public class FilmService {
 
     public Set<User> addLike(
             @NotNull Integer filmId,
-            @NotNull Integer userId)
-    {
+            @NotNull Integer userId) {
         return storage.createLike(filmId, userId);
     }
 
     public Set<User> deleteLike(
             @NotNull Integer filmId,
-            @NotNull Integer userId)
-    {
+            @NotNull Integer userId) {
         return storage.deleteLike(filmId, userId);
     }
 

@@ -45,15 +45,13 @@ public class UserService {
 
     public Set<User> addFriend(
             @NotNull Integer userId,
-            @NotNull Integer friendId)
-    {
+            @NotNull Integer friendId) {
         return storage.createFriend(userId, friendId);
     }
 
     public Set<User> deleteFriend(
             @NotNull Integer userId,
-            @NotNull Integer friendId)
-    {
+            @NotNull Integer friendId) {
         return storage.deleteFriend(userId, friendId);
     }
 
