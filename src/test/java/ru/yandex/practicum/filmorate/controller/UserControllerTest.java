@@ -40,7 +40,7 @@ class UserControllerTest {
 
     @BeforeEach
     void userBuilder() throws Exception {
-        mockMvc.perform(delete(url+"/all"));        // Чтобы тесты не засорялись
+        mockMvc.perform(delete(url + "/all"));        // Чтобы тесты не засорялись
         userBuilder = User.builder()
                 .birthday(LocalDate.of(2001, 1, 1))
                 .email("userTest@yandex.ru")
@@ -170,11 +170,11 @@ class UserControllerTest {
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
 
-        mockMvc.perform(put(url+"/1/friends/2"))
+        mockMvc.perform(put(url + "/1/friends/2"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(1)))
-                .andExpect(jsonPath("$[0].login",is("LoginTest2")));
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
     }
 
     @Test
@@ -188,16 +188,16 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest3").email("EmailTest3@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"))
+        mockMvc.perform(put(url + "/1/friends/2"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(1)))
-                .andExpect(jsonPath("$[0].login",is("LoginTest2")));
-        mockMvc.perform(put(url+"/1/friends/3"))
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
+        mockMvc.perform(put(url + "/1/friends/3"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(2)))
-                .andExpect(jsonPath("$[1].login",is("LoginTest3")));
+                .andExpect(jsonPath("$.size()", is(2)))
+                .andExpect(jsonPath("$[1].login", is("LoginTest3")));
     }
 
     @Test
@@ -206,7 +206,7 @@ class UserControllerTest {
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
 
-        mockMvc.perform(put(url+"/1/friends/41"))
+        mockMvc.perform(put(url + "/1/friends/41"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -218,7 +218,7 @@ class UserControllerTest {
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
 
-        mockMvc.perform(put(url+"/1/friends/-41"))
+        mockMvc.perform(put(url + "/1/friends/-41"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -232,12 +232,12 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest2").email("EmailTest2@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"));
+        mockMvc.perform(put(url + "/1/friends/2"));
 
-        mockMvc.perform(delete(url+"/1/friends/2"))
+        mockMvc.perform(delete(url + "/1/friends/2"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()",is(0)));
+                .andExpect(jsonPath("$.size()", is(0)));
     }
 
     @Test
@@ -251,17 +251,17 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest3").email("EmailTest3@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"));
-        mockMvc.perform(put(url+"/1/friends/3"));
+        mockMvc.perform(put(url + "/1/friends/2"));
+        mockMvc.perform(put(url + "/1/friends/3"));
 
-        mockMvc.perform(delete(url+"/1/friends/2"))
+        mockMvc.perform(delete(url + "/1/friends/2"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()",is(1)));
-        mockMvc.perform(delete(url+"/1/friends/3"))
+                .andExpect(jsonPath("$.size()", is(1)));
+        mockMvc.perform(delete(url + "/1/friends/3"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()",is(0)));
+                .andExpect(jsonPath("$.size()", is(0)));
     }
 
     @Test
@@ -272,9 +272,9 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest2").email("EmailTest2@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"));
+        mockMvc.perform(put(url + "/1/friends/2"));
 
-        mockMvc.perform(delete(url+"/1/friends/21"))
+        mockMvc.perform(delete(url + "/1/friends/21"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -288,9 +288,9 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest2").email("EmailTest2@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"));
+        mockMvc.perform(put(url + "/1/friends/2"));
 
-        mockMvc.perform(delete(url+"/1/friends/-21"))
+        mockMvc.perform(delete(url + "/1/friends/-21"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -304,13 +304,13 @@ class UserControllerTest {
         user = userBuilder.login("LoginTest2").email("EmailTest2@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
-        mockMvc.perform(put(url+"/1/friends/2"));
+        mockMvc.perform(put(url + "/1/friends/2"));
 
-        mockMvc.perform(get(url+"/1/friends"))
+        mockMvc.perform(get(url + "/1/friends"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(1)))
-                .andExpect(jsonPath("$[0].login",is("LoginTest2")));
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
     }
 
     @Test
@@ -360,7 +360,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getCommonFriendsStandart() throws  Exception {
+    void getCommonFriendsStandart() throws Exception {
         user = userBuilder.login("LoginTest1").email("EmailTest1@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
@@ -386,13 +386,13 @@ class UserControllerTest {
         mockMvc.perform(get(url + "/1/friends/common/5"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(1)))
-                .andExpect(jsonPath("$[0].login",is("LoginTest2")));
+                .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
 
     }
 
     @Test
-    void getCommonFriendsTwice() throws  Exception {
+    void getCommonFriendsTwice() throws Exception {
         user = userBuilder.login("LoginTest1").email("EmailTest1@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
@@ -419,14 +419,14 @@ class UserControllerTest {
         mockMvc.perform(get(url + "/1/friends/common/5"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(2)))
-                .andExpect(jsonPath("$[0].login",is("LoginTest2")))
-                .andExpect(jsonPath("$[1].login",is("LoginTest3")));
+                .andExpect(jsonPath("$.size()", is(2)))
+                .andExpect(jsonPath("$[0].login", is("LoginTest2")))
+                .andExpect(jsonPath("$[1].login", is("LoginTest3")));
 
     }
 
     @Test
-    void getCommonFriendsEmpty() throws  Exception {
+    void getCommonFriendsEmpty() throws Exception {
         user = userBuilder.login("LoginTest1").email("EmailTest1@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));
@@ -437,11 +437,11 @@ class UserControllerTest {
         mockMvc.perform(get(url + "/1/friends/common/2"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()",is(0)));
+                .andExpect(jsonPath("$.size()", is(0)));
     }
 
     @Test
-    void getCommonFriendsWrong() throws  Exception {
+    void getCommonFriendsWrong() throws Exception {
         user = userBuilder.login("LoginTest1").email("EmailTest1@mail.ru").id(1).build();
         json = mapper.writeValueAsString(user);
         mockMvc.perform(post(url).content(json).contentType(APPLICATION_JSON_UTF8));

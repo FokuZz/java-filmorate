@@ -31,25 +31,22 @@ class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     private ObjectMapper mapper = new ObjectMapper().findAndRegisterModules()
             .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     private String url = "/films";
     private Film.FilmBuilder filmBuilder;
-
     private Film film;
-
     private final User user = User.builder()
             .birthday(LocalDate.of(2001, 1, 1))
             .email("userTest@yandex.ru")
             .login("UserTest1")
             .id(1)
             .build();
-
     private String json;
+
     @BeforeEach
     void filmBuilder() throws Exception {
-        mockMvc.perform(delete(url+"/all"));        // Чтобы тесты не засорялись
+        mockMvc.perform(delete(url + "/all"));        // Чтобы тесты не засорялись
         filmBuilder = Film.builder()
                 .name("JunitName")
                 .description("JunitDescription")
@@ -67,14 +64,12 @@ class FilmControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().string(json));
-
     }
 
     @Test
     void createEmptyNameFilm() throws Exception {
         film = filmBuilder.id(1).name(null).build();
         json = mapper.writeValueAsString(film);
-
 
         mockMvc.perform(post(url).content(json).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
@@ -152,7 +147,7 @@ class FilmControllerTest {
         film = filmBuilder.name("Film name1").id(1).build();
         json = mapper.writeValueAsString(film);
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON_UTF8).content(json))
-                        .andReturn();
+                .andReturn();
         mockMvc.perform(get(url))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -181,7 +176,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/1/like/1"))
+        mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)));
@@ -196,7 +191,7 @@ class FilmControllerTest {
         String jsonUser = mapper.writeValueAsString(user);
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser));
 
-        mockMvc.perform(put(url+"/1/like/1"))
+        mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)));
@@ -219,11 +214,11 @@ class FilmControllerTest {
                 .build());
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser));
 
-        mockMvc.perform(put(url+"/1/like/1"))
+        mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)));
-        mockMvc.perform(put(url+"/1/like/2"))
+        mockMvc.perform(put(url + "/1/like/2"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)));
@@ -239,7 +234,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/-1/like/1"))
+        mockMvc.perform(put(url + "/-1/like/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -255,7 +250,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/5231/like/1"))
+        mockMvc.perform(put(url + "/5231/like/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
@@ -271,7 +266,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/1/like/s"))
+        mockMvc.perform(put(url + "/1/like/s"))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString("An unexpected error has occurred.")));
@@ -287,7 +282,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(delete(url+"/1/like/1"))
+        mockMvc.perform(delete(url + "/1/like/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.size()", is(0)));
@@ -312,11 +307,11 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(delete(url+"/1/like/1"))
+        mockMvc.perform(delete(url + "/1/like/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.size()", is(0)));
-        mockMvc.perform(delete(url+"/1/like/2"))
+        mockMvc.perform(delete(url + "/1/like/2"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.size()", is(0)));
@@ -332,11 +327,12 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(delete(url+"/-1/like/1"))
+        mockMvc.perform(delete(url + "/-1/like/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
     }
+
     @Test
     void likeDeleteNonexistentID() throws Exception {
         film = filmBuilder.id(1).build();
@@ -347,11 +343,12 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(delete(url+"/5231/like/1"))
+        mockMvc.perform(delete(url + "/5231/like/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("The object has no been Found")));
     }
+
     @Test
     void likeDeleteWrongId() throws Exception {
         film = filmBuilder.id(1).build();
@@ -362,7 +359,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(delete(url+"/1/like/s"))
+        mockMvc.perform(delete(url + "/1/like/s"))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString("An unexpected error has occurred.")));
@@ -390,15 +387,15 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/2/like/1"));
-        mockMvc.perform(put(url+"/2/like/2"));
-        mockMvc.perform(put(url+"/1/like/1"));
+        mockMvc.perform(put(url + "/2/like/1"));
+        mockMvc.perform(put(url + "/2/like/2"));
+        mockMvc.perform(put(url + "/1/like/1"));
 
-        mockMvc.perform(get(url+"/popular"))
+        mockMvc.perform(get(url + "/popular"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name",is("SecondFilmOne")))
-                .andExpect(jsonPath("$.size()",is(2)));
+                .andExpect(jsonPath("$[0].name", is("SecondFilmOne")))
+                .andExpect(jsonPath("$.size()", is(2)));
     }
 
     @Test
@@ -423,14 +420,14 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/2/like/1"));
-        mockMvc.perform(put(url+"/2/like/2"));
-        mockMvc.perform(put(url+"/1/like/1"));
-        mockMvc.perform(get(url+"/popular?count=1"))
+        mockMvc.perform(put(url + "/2/like/1"));
+        mockMvc.perform(put(url + "/2/like/2"));
+        mockMvc.perform(put(url + "/1/like/1"));
+        mockMvc.perform(get(url + "/popular?count=1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name",is("SecondFilmOne")))
-                .andExpect(jsonPath("$.size()",is(1)));
+                .andExpect(jsonPath("$[0].name", is("SecondFilmOne")))
+                .andExpect(jsonPath("$.size()", is(1)));
     }
 
     @Test
@@ -455,10 +452,10 @@ class FilmControllerTest {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonUser))
                 .andReturn();
 
-        mockMvc.perform(put(url+"/2/like/1"));
-        mockMvc.perform(put(url+"/2/like/2"));
-        mockMvc.perform(put(url+"/1/like/1"));
-        mockMvc.perform(get(url+"/popular?count=-2"))
+        mockMvc.perform(put(url + "/2/like/1"));
+        mockMvc.perform(put(url + "/2/like/2"));
+        mockMvc.perform(put(url + "/1/like/1"));
+        mockMvc.perform(get(url + "/popular?count=-2"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Count must be positive")));
