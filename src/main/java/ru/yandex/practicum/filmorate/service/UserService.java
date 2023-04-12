@@ -38,31 +38,38 @@ public class UserService {
     public List<User> get() {
         return storage.getAll();
     }
+
     public User get(@Valid @NotNull Integer userId) {
         return storage.get(userId);
     }
 
-    public Set<User> addFriend(@NotNull Integer userId,
-                               @NotNull Integer friendId) {
-        return storage.createFriend(userId,friendId);
+    public Set<User> addFriend(
+            @NotNull Integer userId,
+            @NotNull Integer friendId)
+    {
+        return storage.createFriend(userId, friendId);
     }
 
-    public Set<User> deleteFriend(@NotNull Integer userId,
-                                  @NotNull Integer friendId) {
-        return storage.deleteFriend(userId,friendId);
+    public Set<User> deleteFriend(
+            @NotNull Integer userId,
+            @NotNull Integer friendId)
+    {
+        return storage.deleteFriend(userId, friendId);
     }
 
-    public Set<User> getAllFriends(@NotNull Integer userId){
-     return storage.getAllFriends(userId);
+    public Set<User> getAllFriends(@NotNull Integer userId) {
+        return storage.getAllFriends(userId);
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         storage.clear();
     }
 
-    public Set<User> getCommonFriends(@NotNull Integer userId1,
-                                      @NotNull Integer userId2) {
-        return storage.getAllCommonFriends(userId1,userId2);
+    public Set<User> getCommonFriends(
+            @NotNull Integer userId1,
+            @NotNull Integer userId2)
+    {
+        return storage.getAllCommonFriends(userId1, userId2);
     }
 
 }

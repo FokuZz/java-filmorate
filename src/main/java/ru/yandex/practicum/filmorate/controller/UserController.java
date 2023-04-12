@@ -9,13 +9,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
-
-import static org.springframework.http.MediaType.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 
 @RestController
@@ -39,25 +35,25 @@ public class UserController {
 
     @PutMapping("/users/{id}/friends/{friendId}")
     public Set<User> addFriend(
-            @PathVariable("id") @NotNull Integer userId
-            , @PathVariable("friendId") @NotNull Integer friendId)
+            @PathVariable("id") @NotNull Integer userId,
+            @PathVariable("friendId") @NotNull Integer friendId)
     {
-        return service.addFriend(userId,friendId);
+        return service.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/users")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public User delete(@Valid @RequestBody User user){
+    public User delete(@Valid @RequestBody User user) {
         return service.delete(user);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Set<User> deleteFriend(
-            @PathVariable("id") @NotNull Integer userId
-            , @PathVariable("friendId") @NotNull Integer friendId)
+            @PathVariable("id") @NotNull Integer userId,
+            @PathVariable("friendId") @NotNull Integer friendId)
     {
-        return service.deleteFriend(userId,friendId);
+        return service.deleteFriend(userId, friendId);
     }
 
     @GetMapping("/users")
@@ -67,7 +63,7 @@ public class UserController {
 
     @DeleteMapping("/users/all")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(){
+    public void delete() {
         service.deleteAll();
     }
 
@@ -82,8 +78,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public Set<User> getCommonFriends(@PathVariable("id") @NotNull Integer userId1
-            , @PathVariable("otherId") @NotNull Integer userId2) {
-        return service.getCommonFriends(userId1,userId2);
+    public Set<User> getCommonFriends(
+            @PathVariable("id") @NotNull Integer userId1,
+            @PathVariable("otherId") @NotNull Integer userId2)
+    {
+        return service.getCommonFriends(userId1, userId2);
     }
 }

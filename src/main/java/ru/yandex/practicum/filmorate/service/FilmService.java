@@ -36,21 +36,25 @@ public class FilmService {
         return storage.getAll();
     }
 
-    public Film get(@NotNull Integer filmId){
+    public Film get(@NotNull Integer filmId) {
         return storage.get(filmId);
     }
 
-    public Set<User> addLike(@NotNull Integer filmId,
-                             @NotNull Integer userId) {
-        return storage.createLike(filmId,userId);
+    public Set<User> addLike(
+            @NotNull Integer filmId,
+            @NotNull Integer userId)
+    {
+        return storage.createLike(filmId, userId);
     }
 
-    public Set<User> deleteLike(@NotNull Integer filmId,
-                                @NotNull Integer userId) {
-        return storage.deleteLike(filmId,userId);
+    public Set<User> deleteLike(
+            @NotNull Integer filmId,
+            @NotNull Integer userId)
+    {
+        return storage.deleteLike(filmId, userId);
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         storage.clear();
     }
 
