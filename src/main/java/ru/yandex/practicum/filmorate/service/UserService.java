@@ -65,8 +65,7 @@ public class UserService {
 
     public Set<User> getCommonFriends(
             @NotNull Integer userId1,
-            @NotNull Integer userId2)
-    {
+            @NotNull Integer userId2) {
         return storage.getAllCommonFriends(userId1, userId2);
     }
 
