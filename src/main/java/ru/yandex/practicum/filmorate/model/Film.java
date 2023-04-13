@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.annotation.ReleaseDate;
 
 import javax.validation.constraints.NotBlank;
@@ -15,20 +13,21 @@ import java.time.LocalDate;
 @Getter
 @ToString(includeFieldNames = true)
 @Builder
+@FieldDefaults(makeFinal = false, level = AccessLevel.PRIVATE)
 public class Film {
     @Setter
-    private Integer id;
+    Integer id;
     @NotBlank(message = "Name cannot be empty")
-    private String name;
+    String name;
     @Size(max = 200, message = "Max 200 letters")
     @NotNull
-    private String description;
+    String description;
     @ReleaseDate
-    private LocalDate releaseDate;
+    LocalDate releaseDate;
 
     @Positive(message = "Only positive duration")
     @NotNull
-    private Integer duration;
+    Integer duration;
 
     @Override
     public boolean equals(Object o) {

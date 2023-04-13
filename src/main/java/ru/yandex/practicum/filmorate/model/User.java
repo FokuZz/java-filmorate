@@ -2,10 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -17,24 +15,25 @@ import java.time.LocalDate;
 @Getter
 @ToString(includeFieldNames = true)
 @Builder
+@FieldDefaults(makeFinal = false, level = AccessLevel.PRIVATE)
 public class User {
     @Setter
-    private Integer id;
+    Integer id;
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "This is not Email format")
     @Setter
-    private String email;
+    String email;
 
     @NotBlank(message = "Login cannot be empty")
     @Pattern(regexp = "\\S+", message = "Login cannot have whitespace")
     @Setter
-    private String login;
+    String login;
     @Setter
-    private String name;
+    String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "The date of birth cannot be in the future")
     @NotNull(message = "Birthday cannot be empty")
-    private LocalDate birthday;
+    LocalDate birthday;
 
     @Override
     public boolean equals(Object o) {

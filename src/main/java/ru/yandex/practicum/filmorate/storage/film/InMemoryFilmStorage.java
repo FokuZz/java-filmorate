@@ -1,31 +1,24 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.exception.HasAlreadyBeenCreatedException;
 import ru.yandex.practicum.filmorate.service.exception.HasNoBeenFoundException;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class InMemoryFilmStorage implements FilmStorage {
-
-    private final InMemoryUserStorage userStorage;
-
+    @Getter
     private final Map<Integer, Film> films = new HashMap<>();
-
-    private final Map<Integer, Set<User>> likes = new HashMap<>();
-    Set<User> setUsers;
-    private List<Map.Entry<Integer, Set<User>>> entries;
-    private Set<Film> topFilms;
     private Integer counterId = 1;
     private Integer deleteCounter = 0;
 
@@ -41,7 +34,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         } else {
             film.setId(counterId++);
         }
-        likes.put(film.getId(), new HashSet<>());
         films.put(film.getId(), film);
         return film;
     }
@@ -61,7 +53,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         counterId = 1;
         deleteCounter = 0;
         films.clear();
-        likes.clear();
     }
 
     @Override
@@ -87,47 +78,5 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new HasNoBeenFoundException();
         }
         return films.get(filmId);
-    }
-
-    @Override
-    public Set<User> createLike(Integer filmId, Integer userId) {
-        if (!userStorage.getUsers().containsKey(userId) || !films.containsKey(filmId)) {
-            log.warn("Создания лайка не произошло из-за неверного ID", UserController.class);
-            throw new HasNoBeenFoundException();
-        }
-        setUsers = likes.getOrDefault(filmId, new HashSet<>());
-        setUsers.add(userStorage.getUsers().get(userId));
-        likes.put(filmId, setUsers);
-        return likes.get(filmId);
-    }
-
-    @Override
-    public Set<User> deleteLike(Integer filmId, Integer userId) {
-        if (!userStorage.getUsers().containsKey(userId) || !films.containsKey(filmId)) {
-            log.warn("Создания лайка не произошло из-за неверного ID", UserController.class);
-            throw new HasNoBeenFoundException();
-        }
-        setUsers = likes.getOrDefault(filmId, new HashSet<>());
-        if (!setUsers.isEmpty()) {
-            setUsers.removeIf(user -> user.getId().equals(userId));
-        }
-        likes.put(filmId, setUsers);
-        return likes.get(filmId);
-    }
-
-    @Override
-    public Set<Film> getTop(Integer count) {
-        entries = new ArrayList<>(likes.entrySet());
-        entries.sort(Comparator.comparingInt(entry -> entry.getValue().size() * -1)); // -1 для сортировки по убыванию
-        topFilms = new HashSet<>();
-        int i = 0;
-        for (Map.Entry<Integer, Set<User>> entry : entries) {
-            topFilms.add(films.get(entry.getKey()));
-            i++;
-            if (i >= count) {
-                break;
-            }
-        }
-        return topFilms;
     }
 }
