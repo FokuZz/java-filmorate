@@ -5,13 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.text.SimpleDateFormat;
@@ -25,12 +28,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @ExtendWith(SpringExtension.class)
+@AutoConfigureTestDatabase
 @SpringBootTest
 @AutoConfigureMockMvc()
 class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     private ObjectMapper mapper = new ObjectMapper().findAndRegisterModules()
             .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     private String url = "/films";
@@ -46,12 +53,23 @@ class FilmControllerTest {
 
     @BeforeEach
     void filmBuilder() throws Exception {
-        mockMvc.perform(delete(url + "/all"));        // Чтобы тесты не засорялись
         filmBuilder = Film.builder()
                 .name("JunitName")
                 .description("JunitDescription")
                 .releaseDate(LocalDate.of(2020, 1, 1))
-                .duration(90);
+                .duration(90)
+                .mpa(Mpa.builder().id(2).build());
+        jdbcClear();
+    }
+
+    void jdbcClear() {
+        jdbcTemplate.update("DELETE FROM USERS;");
+        jdbcTemplate.update("DELETE FROM FILMS;");
+        jdbcTemplate.update("DELETE FROM FRIENDS;");
+        jdbcTemplate.update("DELETE FROM FILM_GENRE;");
+        jdbcTemplate.update("DELETE FROM LIKES;");
+        jdbcTemplate.update("ALTER TABLE USERS ALTER COLUMN user_id RESTART WITH 1;");
+        jdbcTemplate.update("ALTER TABLE FILMS ALTER COLUMN film_id RESTART WITH 1;");
     }
 
     @Test
@@ -88,7 +106,7 @@ class FilmControllerTest {
         mockMvc.perform(post(url).content(json).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Max 200 letters")));
+                .andExpect(content().string(containsString("Description has max 200 symbols")));
     }
 
     @Test
@@ -178,8 +196,7 @@ class FilmControllerTest {
 
         mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -193,8 +210,7 @@ class FilmControllerTest {
 
         mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -216,12 +232,10 @@ class FilmControllerTest {
 
         mockMvc.perform(put(url + "/1/like/1"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)));
+                .andExpect(status().isOk());
         mockMvc.perform(put(url + "/1/like/2"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -284,8 +298,7 @@ class FilmControllerTest {
 
         mockMvc.perform(delete(url + "/1/like/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()", is(0)));
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -309,12 +322,10 @@ class FilmControllerTest {
 
         mockMvc.perform(delete(url + "/1/like/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()", is(0)));
+                .andExpect(status().isNoContent());
         mockMvc.perform(delete(url + "/1/like/2"))
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.size()", is(0)));
+                .andExpect(status().isNoContent());
     }
 
     @Test

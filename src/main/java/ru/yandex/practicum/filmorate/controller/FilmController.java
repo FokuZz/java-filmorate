@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +29,9 @@ public class FilmController {
     }
 
     @PutMapping("/films/{id}/like/{userId}")
-    public Set<User> like(
+    public boolean like(
             @PathVariable("id") @NotNull Integer filmId,
-            @PathVariable() @NotNull Integer userId) {
+            @PathVariable("userId") @NotNull Integer userId) {
         return service.addLike(filmId, userId);
     }
 
@@ -43,15 +41,9 @@ public class FilmController {
         return service.delete(film);
     }
 
-    @DeleteMapping("/films/all")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete() {
-        service.deleteAll();
-    }
-
     @DeleteMapping("/films/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Set<User> deleteLike(
+    public boolean deleteLike(
             @PathVariable("id") @NotNull Integer filmId,
             @PathVariable() @NotNull Integer userId) {
         return service.deleteLike(filmId, userId);
@@ -69,7 +61,7 @@ public class FilmController {
     }
 
     @GetMapping(value = "/films/popular", consumes = {}, produces = {})
-    public Set<Film> getTop(@RequestParam(defaultValue = "10", name = "count") @NotNull Integer count) {
+    public List<Film> getTop(@RequestParam(defaultValue = "10", name = "count") @NotNull Integer count) {
         return service.getTopLiked(count);
     }
 

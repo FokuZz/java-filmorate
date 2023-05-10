@@ -5,8 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.User;
@@ -22,12 +24,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
+@AutoConfigureTestDatabase
 @SpringBootTest
 @AutoConfigureMockMvc()
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private ObjectMapper mapper = new ObjectMapper().findAndRegisterModules()
             .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -39,12 +45,22 @@ class UserControllerTest {
 
 
     @BeforeEach
-    void userBuilder() throws Exception {
-        mockMvc.perform(delete(url + "/all"));        // Чтобы тесты не засорялись
+    void userBuilder() {
         userBuilder = User.builder()
                 .birthday(LocalDate.of(2001, 1, 1))
                 .email("userTest@yandex.ru")
                 .login("UserTest1");
+        jdbcClear();
+    }
+
+    void jdbcClear() {
+        jdbcTemplate.update("DELETE FROM USERS;");
+        jdbcTemplate.update("DELETE FROM FILMS;");
+        jdbcTemplate.update("DELETE FROM FRIENDS;");
+        jdbcTemplate.update("DELETE FROM FILM_GENRE;");
+        jdbcTemplate.update("DELETE FROM LIKES;");
+        jdbcTemplate.update("ALTER TABLE USERS ALTER COLUMN user_id RESTART WITH 1;");
+        jdbcTemplate.update("ALTER TABLE FILMS ALTER COLUMN film_id RESTART WITH 1;");
     }
 
     @Test
@@ -173,7 +189,7 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
+                .andExpect(jsonPath("$[0]", is(2)));
     }
 
     @Test
@@ -191,12 +207,12 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].login", is("LoginTest2")));
+                .andExpect(jsonPath("$[0]", is(2)));
         mockMvc.perform(put(url + "/1/friends/3"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
-                .andExpect(jsonPath("$[1].login", is("LoginTest3")));
+                .andExpect(jsonPath("$[1]", is(3)));
     }
 
     @Test
