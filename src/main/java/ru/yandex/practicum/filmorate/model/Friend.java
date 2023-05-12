@@ -14,9 +14,9 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Friend {
     @Id
-    private Integer id;
-    private Integer userId;
-    private Integer friendId;
+    Integer id;
+    Integer userId;
+    Integer friendId;
     @NotNull
-    private Boolean confirmedFriend;
+    Boolean confirmedFriend;
 }

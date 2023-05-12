@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @FieldDefaults(makeFinal = false, level = AccessLevel.PRIVATE)
 public class Genre {
     @Id
-    private Integer id;
+    Integer id;
     @Size(max = 32, message = "Name has max 34 symbols")
-    private String name;
+    String name;
 }

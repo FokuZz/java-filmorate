@@ -39,7 +39,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
                 .usingGeneratedKeyColumns("film_id");
         int id = simpleJdbcInsert.executeAndReturnKey(film.toMap()).intValue();
         film.setId(id);
-        if (!film.getGenres().isEmpty()) {
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             film.getGenres().forEach(filmid -> addFilmGenre(id, filmid.getId()));
         }
 
