@@ -4,13 +4,17 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 
-public interface FilmStorage {
+public interface FilmDbStorage {
 
     Film create(Film film);
 
-    Film delete(Film film);
+    boolean addFilmGenre(int filmId, int genreId);
 
-    void clear();
+    boolean deleteFilmGenre(int filmId, int genreId);
+
+    boolean deleteAllFilmGenre(int filmId);
+
+    Film delete(Film film);
 
     Film update(Film film);
 

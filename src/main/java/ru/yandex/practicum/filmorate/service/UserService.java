@@ -7,28 +7,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.exception.HasNoBeenFoundException;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorageImpl;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Validated
 @RequiredArgsConstructor
 public class UserService {
-    private final InMemoryUserStorage storage;
-    private final Map<Integer, Set<User>> friends = new HashMap<>();
-    private Set<User> setUsers;
+
+    private final FriendsDao friendsDao;
+    private final UserDbStorageImpl storage;
 
     @SneakyThrows
     public User create(@Valid @NotNull User user) {
-        storage.create(user);
-        friends.put(user.getId(), new HashSet<>());
-        return user;
+        return storage.create(user);
     }
 
     public User update(@Valid @NotNull User user) {
@@ -47,61 +48,60 @@ public class UserService {
         return storage.get(userId);
     }
 
-    public Set<User> addFriend(
+    public List<Integer> addFriend(
             @NotNull Integer userId,
             @NotNull Integer friendId) {
-        if (!storage.getUsers().containsKey(userId) || !storage.getUsers().containsKey(friendId)) {
+        if (!storage.containsKey(userId) || !storage.containsKey(friendId)) {
             log.warn("Добавление в друзья не произошло из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
-        setUsers = new HashSet<>(friends.get(friendId));
-        setUsers.add(storage.getUsers().get(userId));
-        friends.put(friendId, setUsers);
-        setUsers = new HashSet<>(friends.get(userId));
-        setUsers.add(storage.getUsers().get(friendId));
-        friends.put(userId, setUsers);
-        return friends.get(userId);
+        boolean isUser1FriendToUser2 = friendsDao.getFriendsByUserId(userId).contains(friendId);
+        boolean isUser2FriendToUser1 = friendsDao.getFriendsByUserId(friendId).contains(userId);
+        if (!isUser1FriendToUser2 && !isUser2FriendToUser1) {
+            friendsDao.addFriend(userId, friendId);
+        } else if (isUser1FriendToUser2 && !isUser2FriendToUser1) {
+            friendsDao.updateFriend(friendId, userId, true);
+        } else {
+            log.debug("id = {] уже в друзьях у id = {}", userId, friendId);
+        }
+
+        return friendsDao.getFriendsByUserId(userId);
     }
 
-    public Set<User> deleteFriend(
+    public List<Integer> deleteFriend(
             @NotNull Integer userId,
             @NotNull Integer friendId) {
-        if (!storage.getUsers().containsKey(userId) || !storage.getUsers().containsKey(friendId)) {
+        if (!storage.containsKey(userId) || !storage.containsKey(friendId)) {
             log.warn("Удаление из друзей не произошло из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
-        setUsers = friends.getOrDefault(userId, new HashSet<>());
-        if (!setUsers.isEmpty()) {
-            setUsers.removeIf(user -> user.getId().equals(friendId));
+        if (friendsDao.deleteFriend(userId, friendId)) {
+            return friendsDao.getFriends();
         }
-
-        return setUsers;
+        log.warn("Удаление из друзей не произошло, id не найден в списке друзей", UserController.class);
+        throw new HasNoBeenFoundException();
     }
 
-    public Set<User> getAllFriends(@NotNull Integer userId) {
-        if (!storage.getUsers().containsKey(userId)) {
+    public List<User> getAllFriends(@NotNull Integer userId) {
+        if (!storage.containsKey(userId)) {
             log.warn("Получение списка друзей не произошло из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
-        return friends.get(userId);
-    }
-
-    public void deleteAll() {
-        friends.clear();
-        storage.clear();
+        return friendsDao.getFriendsByUserId(userId).stream()
+                .map(this::get).collect(Collectors.toList());
     }
 
     public Set<User> getCommonFriends(
             @NotNull Integer userId1,
             @NotNull Integer userId2) {
-        if (!storage.getUsers().containsKey(userId1) || !storage.getUsers().containsKey(userId2)) {
+        if (!storage.containsKey(userId1) || !storage.containsKey(userId2)) {
             log.warn("Получение общих друзей не произошло из-за неверного ID", UserController.class);
             throw new HasNoBeenFoundException();
         }
-
-        setUsers = new HashSet<>(friends.getOrDefault(userId1, new HashSet<>()));
-        setUsers.retainAll(friends.getOrDefault(userId2, new HashSet<>()));
-        return setUsers;
+        return friendsDao.getFriendsByUserId(userId1).stream()
+                .filter(friendsDao.getFriendsByUserId(userId2)::contains)
+                .map(this::get)
+                .collect(Collectors.toSet());
     }
 
 }

@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public Set<User> addFriend(
+    public List<Integer> addFriend(
             @PathVariable("id") @NotNull Integer userId,
             @PathVariable("friendId") @NotNull Integer friendId) {
         return service.addFriend(userId, friendId);
@@ -48,7 +48,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Set<User> deleteFriend(
+    public List<Integer> deleteFriend(
             @PathVariable("id") @NotNull Integer userId,
             @PathVariable("friendId") @NotNull Integer friendId) {
         return service.deleteFriend(userId, friendId);
@@ -59,19 +59,13 @@ public class UserController {
         return service.get();
     }
 
-    @DeleteMapping("/users/all")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete() {
-        service.deleteAll();
-    }
-
     @GetMapping("/users/{id}")
     public User get(@PathVariable("id") @NotNull Integer userId) {
         return service.get(userId);
     }
 
     @GetMapping("/users/{id}/friends")
-    public Set<User> getFriends(@PathVariable("id") @NotNull Integer userId) {
+    public List<User> getFriends(@PathVariable("id") @NotNull Integer userId) {
         return service.getAllFriends(userId);
     }
 

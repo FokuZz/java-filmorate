@@ -2,38 +2,30 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.exception.HasNoBeenFoundException;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorageImpl;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorageImpl;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.*;
+import java.util.List;
 
 @Service
 @Validated
 @RequiredArgsConstructor
 @Slf4j
 public class FilmService {
-    private final InMemoryFilmStorage storage;
-    private final InMemoryUserStorage userStorage;
-
-    private final Map<Integer, Set<User>> likes = new HashMap<>();
-    Set<User> setUsers;
-
-    private List<Map.Entry<Integer, Set<User>>> entries;
-    private Set<Film> topFilms;
+    private final JdbcTemplate jdbcTemplate;
+    private final FilmDbStorageImpl storage;
+    private final UserDbStorageImpl userStorage;
 
     public Film create(@Valid @NotNull Film film) {
-        storage.create(film);
-        likes.put(film.getId(), new HashSet<>());
-        return film;
+        return storage.create(film);
     }
 
     public Film update(@Valid @NotNull Film film) {
@@ -52,51 +44,42 @@ public class FilmService {
         return storage.get(filmId);
     }
 
-    public Set<User> addLike(
+
+    public List<Integer> getLikeByFilmId(long filmId) {
+        String sql = "SELECT user_id FROM likes WHERE film_id =?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("user_id"), filmId);
+    }
+
+    public boolean addLike(
             @NotNull Integer filmId,
             @NotNull Integer userId) {
-        if (!userStorage.getUsers().containsKey(userId) || !storage.getFilms().containsKey(filmId)) {
-            log.warn("Создания лайка не произошло из-за неверного ID", UserController.class);
+        if (!userStorage.containsKey(userId) || !storage.containsKey(filmId)) {
+            log.warn("Создания лайка не произошло из-за неверного ID", FilmService.class);
             throw new HasNoBeenFoundException();
         }
-        setUsers = likes.getOrDefault(filmId, new HashSet<>());
-        setUsers.add(userStorage.getUsers().get(userId));
-        likes.put(filmId, setUsers);
-        return likes.get(filmId);
+        String sql = "INSERT INTO likes(film_id, user_id) VALUES(?, ?)";
+        return jdbcTemplate.update(sql, filmId, userId) > 0;
+
     }
 
-    public Set<User> deleteLike(
+    public boolean deleteLike(
             @NotNull Integer filmId,
             @NotNull Integer userId) {
-        if (!userStorage.getUsers().containsKey(userId) || !storage.getFilms().containsKey(filmId)) {
-            log.warn("Создания лайка не произошло из-за неверного ID", UserController.class);
+        if (!userStorage.containsKey(userId) || !storage.containsKey(filmId)) {
+            log.warn("Создания лайка не произошло из-за неверного ID", FilmService.class);
             throw new HasNoBeenFoundException();
         }
-        setUsers = likes.getOrDefault(filmId, new HashSet<>());
-        if (!setUsers.isEmpty()) {
-            setUsers.removeIf(user -> user.getId().equals(userId));
-        }
-        likes.put(filmId, setUsers);
-        return likes.get(filmId);
+        String sql = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
+        return jdbcTemplate.update(sql, filmId, userId) > 0;
     }
 
-    public void deleteAll() {
-        likes.clear();
-        storage.clear();
-    }
-
-    public Set<Film> getTopLiked(@NotNull @Positive(message = "Count must be positive") Integer count) {
-        entries = new ArrayList<>(likes.entrySet());
-        entries.sort(Comparator.comparingInt(entry -> entry.getValue().size() * -1)); // -1 для сортировки по убыванию
-        topFilms = new HashSet<>();
-        int i = 0;
-        for (Map.Entry<Integer, Set<User>> entry : entries) {
-            topFilms.add(storage.getFilms().get(entry.getKey()));
-            i++;
-            if (i >= count) {
-                break;
-            }
-        }
-        return topFilms;
+    public List<Film> getTopLiked(@NotNull @Positive(message = "Count must be positive") Integer count) {
+        String sql = "SELECT f.*, r.name AS rating_name FROM FILMS AS f " +
+                "JOIN RATING AS r ON f.RATING_ID = r.RATING_ID " +
+                "LEFT JOIN (SELECT FILM_ID, COUNT(user_id) AS total_likes " +
+                "FROM LIKES GROUP BY FILM_ID ORDER BY total_likes DESC) AS list ON f.FILM_ID = list.FILM_ID " +
+                "ORDER BY list.total_likes DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> storage.mapRowToFilm(rs), count);
     }
 }
